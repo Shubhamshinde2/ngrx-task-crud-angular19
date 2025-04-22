@@ -1,0 +1,51 @@
+<div class="task-manager">
+    <h2>Task Manager</h2>
+    <form [formGroup]="taskForm" (ngSubmit)="onAddTask()" class="task-form">
+      <input id="title" formControlName="title" type="text" placeholder="Enter title" />
+      <input id="description" formControlName="description" type="text" placeholder="Enter description" />
+      <button type="submit" [disabled]="taskForm.invalid">Add Task</button>
+    </form>
+    <div class="task-table-container">
+      <h3>Tasks ({{ taskCount$ | async }})</h3>
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of tasks$ | async">
+            <td>{{ task.title }}</td>
+            <td>{{ task.description }}</td>
+            <td>
+              <span class="badge" [class.completed]="task.completed" [class.pending]="!task.completed">
+                {{ task.completed ? 'Completed' : 'Pending' }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-complete" *ngIf="!task.completed" (click)="onToggleStatus(task)">
+                Complete
+              </button>
+              <button class="btn-pending" *ngIf="task.completed" (click)="onToggleStatus(task)">
+                Pending
+              </button>
+              <button class="btn-remove" (click)="onRemoveTask(task.id)">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="chart-container">
+      <h3>Status Overview</h3>
+      <p-chart
+        type="pie"
+        [data]="taskStatusDistribution$ | async"
+        [style]="{ width: '300px', height: '300px' }"
+      ></p-chart>
+    </div>
+  </div>
+  
