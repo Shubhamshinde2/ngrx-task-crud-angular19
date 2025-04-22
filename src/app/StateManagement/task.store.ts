@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { addTask, deleteTask, loadTasks, updateTask } from './task.actions';
@@ -11,12 +11,14 @@ import { selectTaskCount, selectTasks, selectTaskStatusDistribution } from './ta
 export class TaskStore {
   tasks$: Observable<Task[]>;
   taskCount$: Observable<number>;
-  taskStatusDistribution$: Observable<any>;  
+  taskStatusSignal = signal<any>(null); 
 
   constructor(private store: Store) {
     this.tasks$ = this.store.select(selectTasks);
     this.taskCount$ = this.store.select(selectTaskCount);
-    this.taskStatusDistribution$ = this.store.select(selectTaskStatusDistribution);  
+    this.store.select(selectTaskStatusDistribution).subscribe(statusData => {
+      this.taskStatusSignal.set(statusData);
+    });
   }
 
   loadTasks() {

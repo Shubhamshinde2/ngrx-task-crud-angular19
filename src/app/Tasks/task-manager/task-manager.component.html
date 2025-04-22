@@ -41,11 +41,7 @@
   
     <div class="chart-container">
       <h3>Status Overview</h3>
-      <p-chart
-        type="pie"
-        [data]="taskStatusDistribution$ | async"
-        [style]="{ width: '300px', height: '300px' }"
-      ></p-chart>
+      <app-chart [data$]="taskStatusSignal"></app-chart>
     </div>
   </div>
   

@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TaskStore } from '../../StateManagement/task.store'; 
 import { Observable } from 'rxjs';
 import { Task } from '../../services/task';
-import { CommonModule } from '@angular/common';
+import { Signal } from '@angular/core'; 
+import { ChartComponent } from '../task-chart/chart/chart.component';
 import { ChartModule } from 'primeng/chart';
+import { CommonModule } from '@angular/common';
+import { TaskStore } from '../../StateManagement/task.store';
 
 @Component({
   selector: 'app-task-manager',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ChartModule],
+  imports: [CommonModule, ReactiveFormsModule, ChartModule, ChartComponent], 
   templateUrl: './task-manager.component.html',
   styleUrls: ['./task-manager.component.scss']
 })
@@ -17,7 +19,7 @@ export class TaskManagerComponent implements OnInit {
   taskForm!: FormGroup;
   tasks$!: Observable<Task[]>;
   taskCount$!: Observable<number>;
-  taskStatusDistribution$!: Observable<any>;
+  taskStatusSignal!: Signal<any>;
 
   constructor(
     private fb: FormBuilder,
@@ -29,9 +31,10 @@ export class TaskManagerComponent implements OnInit {
       title: ['', Validators.required],
       description: ['', Validators.required]
     });
+
+    this.taskStatusSignal = this.taskStore.taskStatusSignal; 
     this.tasks$ = this.taskStore.tasks$;
     this.taskCount$ = this.taskStore.taskCount$;
-    this.taskStatusDistribution$ = this.taskStore.taskStatusDistribution$;
   }
 
   onAddTask(): void {
@@ -55,13 +58,9 @@ export class TaskManagerComponent implements OnInit {
   private generateId(): string {
     return Math.random().toString(36).substring(7);
   }
-  onCompleteTask(task: Task): void {
-    const updatedTask = { ...task, completed: true };
-    this.taskStore.updateTask(updatedTask);
-  }
+
   onToggleStatus(task: Task): void {
     const updatedTask = { ...task, completed: !task.completed };
     this.taskStore.updateTask(updatedTask);
   }
-  
 }

@@ -1,10 +1,8 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { Task } from '../services/task';
+
 export const selectTasks = createFeatureSelector<Task[]>('tasks');
-export const selectTaskCount = createSelector(
-  selectTasks,
-  (tasks) => tasks.length
-);
+export const selectTaskCount = createSelector(selectTasks, (tasks) => tasks.length);
 
 export const selectTaskStatusDistribution = createSelector(
   selectTasks,
